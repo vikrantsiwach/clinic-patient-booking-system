@@ -1,0 +1,4 @@
+node_modules/
+.env
+sms_mock_log.jsonl
+.vercel

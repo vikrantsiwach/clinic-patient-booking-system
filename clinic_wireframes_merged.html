@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinic Appointment System — Merged Design Reference (v1 + v2)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #0D1117; --teal:  #0A7B6C; --teal-lt: #E6F4F1; --teal-md: #B2DDD7;
+  --amber: #D97706; --red:  #DC2626;  --green:  #16A34A;
+  --surface: #F7F9F8; --card: #FFFFFF; --border: #E2E8E6;
+  --muted: #6B7A76;  --label: #3D4E49; --pill: #EEF7F5;
+  --shadow: 0 2px 12px rgba(10,123,108,.08),0 1px 3px rgba(0,0,0,.06);
+  --shadow-lg: 0 8px 32px rgba(10,123,108,.12),0 2px 8px rgba(0,0,0,.08);
+  --orange: #EA580C; --orange-lt: #FFF7ED; --orange-md: #FED7AA;
+  --purple: #7C3AED; --purple-lt: #F3E8FF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#EEF2EF;color:var(--ink);min-height:100vh}
+.shell{display:grid;grid-template-columns:252px 1fr;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{background:var(--ink);color:#fff;padding:32px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-brand{padding:0 24px 28px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-brand .icon{width:36px;height:36px;background:var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px}
+.sidebar-brand h1{font-family:'DM Serif Display',serif;font-size:14px;line-height:1.3;color:#fff;font-weight:400}
+.sidebar-brand p{font-size:10px;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:.05em;text-transform:uppercase}
+.section-label{padding:18px 24px 6px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;border-left:3px solid transparent;transition:all .15s;user-select:none}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item.active{background:rgba(10,123,108,.25);border-left-color:var(--teal);color:#fff}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0}
+.nav-item.active .nav-dot{background:var(--teal)}
+.nav-badge{margin-left:auto;background:var(--teal);color:#fff;font-size:10px;padding:1px 7px;border-radius:20px}
+.nav-badge.orange{background:var(--orange)}
+.nav-badge.new{background:var(--green)}
+
+/* MAIN */
+.main{padding:36px 44px;overflow-x:hidden}
+.page-header{margin-bottom:32px}
+.page-header h2{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--ink);margin-bottom:6px}
+.page-header p{font-size:13.5px;color:var(--muted);line-height:1.6}
+.new-tag{display:inline-flex;align-items:center;gap:5px;background:var(--orange-lt);border:1px solid var(--orange-md);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--orange);font-weight:600;margin-left:10px}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:block}
+
+/* DEVICE */
+.device-wrap{display:flex;gap:36px;flex-wrap:wrap;align-items:flex-start}
+.device-frame{width:360px;flex-shrink:0}
+.device-label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:10px;font-weight:500}
+.phone{background:#fff;border-radius:28px;border:2px solid #CBD5D1;box-shadow:var(--shadow-lg);overflow:hidden}
+.phone-notch{background:var(--ink);height:34px;display:flex;align-items:center;justify-content:center}
+.phone-notch-pill{width:90px;height:11px;background:#1a2420;border-radius:20px}
+.phone-body{min-height:660px;background:var(--surface);overflow:hidden}
+.phone-status{background:#fff;padding:5px 18px;display:flex;justify-content:space-between;font-size:11px;color:var(--label);font-weight:500;border-bottom:1px solid var(--border)}
+
+/* ANNOTATIONS */
+.annotations{flex:1;min-width:260px;max-width:400px}
+.ann-title{font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);margin-bottom:14px}
+.ann-item{display:flex;gap:12px;margin-bottom:16px;align-items:flex-start}
+.ann-num{width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;color:#fff}
+.ann-num.teal{background:var(--teal)}
+.ann-num.orange{background:var(--orange)}
+.ann-num.red{background:var(--red)}
+.ann-num.green{background:var(--green)}
+.ann-text strong{display:block;font-size:12.5px;color:var(--label);font-weight:600;margin-bottom:2px}
+.ann-text span{font-size:12px;color:var(--muted);line-height:1.55}
+
+/* FLOW STEPS */
+.flow-steps{display:flex;gap:0;margin-bottom:28px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px 18px;overflow-x:auto;flex-wrap:nowrap}
+.flow-step{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);white-space:nowrap}
+.flow-step .sn{width:20px;height:20px;border-radius:50%;background:var(--border);color:var(--muted);font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.flow-step.done .sn{background:var(--teal);color:#fff}
+.flow-step.current{color:var(--teal);font-weight:600}
+.flow-step.current .sn{background:var(--teal);color:#fff;box-shadow:0 0 0 3px var(--teal-lt)}
+.flow-step.orange-flow{color:var(--orange)}
+.flow-step.orange-flow .sn{background:var(--orange);color:#fff;box-shadow:0 0 0 3px var(--orange-lt)}
+.flow-arrow{margin:0 8px;color:var(--border);font-size:13px}
+
+/* UI COMPONENTS */
+.app-bar{background:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.app-bar-back{width:30px;height:30px;background:var(--surface);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;color:var(--label);border:1px solid var(--border)}
+.app-bar h3{font-size:14px;font-weight:600;color:var(--ink);flex:1}
+.app-bar-sub{font-size:10.5px;color:var(--muted);margin-top:1px}
+.progress-bar{height:3px;background:var(--border)}
+.progress-fill{height:100%;background:var(--teal);transition:width .3s ease}
+.progress-fill.orange{background:var(--orange)}
+.p-content{padding:16px}
+
+/* HERO */
+.clinic-hero{background:linear-gradient(135deg,var(--ink) 0%,#1a3530 100%);padding:22px 18px;color:#fff;position:relative;overflow:hidden}
+.clinic-hero::before{content:'';position:absolute;top:-30px;right:-30px;width:110px;height:110px;background:rgba(10,123,108,.3);border-radius:50%}
+.clinic-hero .htag{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:3px 9px;font-size:10px;color:rgba(255,255,255,.85);margin-bottom:10px;position:relative;z-index:1}
+.clinic-hero h2{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;margin-bottom:3px;position:relative;z-index:1}
+.clinic-hero p{font-size:11.5px;color:rgba(255,255,255,.65);position:relative;z-index:1}
+
+/* BOOKING CHANNELS BANNER */
+.channels-row{display:flex;gap:8px;padding:12px 16px;background:#fff;border-bottom:1px solid var(--border)}
+.channel-pill{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border-radius:12px;border:1.5px solid var(--border);cursor:pointer;transition:all .12s;font-size:11px;color:var(--muted);text-align:center;font-weight:500}
+.channel-pill.active-channel{border-color:var(--teal);background:var(--teal-lt);color:var(--teal)}
+.channel-pill.active-channel.orange{border-color:var(--orange);background:var(--orange-lt);color:var(--orange)}
+.channel-pill .ch-icon{font-size:18px}
+
+/* CARDS */
+.doctor-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start}
+.doctor-avatar{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--teal) 0%,#0D9B89 100%);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.doctor-info h4{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.doctor-info .spec{font-size:11px;color:var(--teal);font-weight:500;margin-bottom:4px}
+.doctor-info .quals{font-size:10.5px;color:var(--muted)}
+.rating-row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.rpill{display:flex;align-items:center;gap:3px;background:var(--teal-lt);border-radius:20px;padding:2px 7px;font-size:10px;color:var(--teal);font-weight:500}
+
+/* BUTTONS */
+.btn-primary{display:block;width:100%;background:var(--teal);color:#fff;border:none;border-radius:12px;padding:13px;font-size:13.5px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:center;box-shadow:0 4px 14px rgba(10,123,108,.28);transition:all .15s}
+.btn-primary.orange{background:var(--orange);box-shadow:0 4px 14px rgba(234,88,12,.28)}
+.btn-secondary{display:block;width:100%;background:var(--surface);color:var(--label);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:center;margin-top:8px}
+.section-title{font-size:11px;font-weight:600;color:var(--label);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;margin-top:18px}
+.section-title:first-child{margin-top:0}
+
+/* INFO ROWS */
+.info-row{display:flex;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--label)}
+.info-row:last-child{border-bottom:none}
+.info-row .value{margin-left:auto;font-size:11.5px;color:var(--muted)}
+
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;padding:0 4px;margin-bottom:10px}
+.cal-nav span{font-size:13.5px;font-weight:600;color:var(--ink)}
+.cal-nav button{width:28px;height:28px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--label)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
+.cal-day-name{font-size:9.5px;font-weight:600;color:var(--muted);text-transform:uppercase;padding:3px 0 6px;letter-spacing:.04em}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:12px;cursor:pointer;color:var(--label);transition:all .12s}
+.cal-day.has{font-weight:600;color:var(--ink)}
+.cal-day.sel{background:var(--teal);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(10,123,108,.35)}
+.cal-day.dis{color:var(--border);cursor:not-allowed}
+.cal-day.today{border:1.5px solid var(--teal);color:var(--teal);font-weight:600}
+
+/* SLOTS */
+.slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.slot-btn{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:9px 5px;font-size:12px;font-weight:500;color:var(--label);cursor:pointer;text-align:center;transition:all .12s;font-family:'DM Sans',sans-serif}
+.slot-btn.sel{background:var(--teal);border-color:var(--teal);color:#fff;box-shadow:0 2px 8px rgba(10,123,108,.3)}
+.slot-btn.few{border-color:#FCD34D;background:#FFFBEB;color:#92400E}
+
+/* FORM */
+.form-group{margin-bottom:12px}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--label);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.form-label .opt{font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px}
+.form-input{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:11px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:#fff;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--teal)}
+.form-input.filled{border-color:var(--teal-md);background:var(--teal-lt)}
+
+/* SUMMARY */
+.summary-card{background:var(--teal-lt);border:1.5px solid var(--teal-md);border-radius:14px;padding:14px;margin-bottom:14px}
+.summary-card.blue{background:#EFF6FF;border-color:#BFDBFE}
+.summary-card h4{font-size:12px;font-weight:600;color:var(--teal);margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.summary-card.blue h4{color:#1D4ED8}
+.summary-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--teal-md);font-size:12px}
+.summary-card.blue .summary-row{border-bottom-color:#BFDBFE}
+.summary-row:last-child{border-bottom:none;padding-bottom:0}
+.summary-row .key{color:var(--muted)}.summary-row .val{font-weight:600;color:var(--label)}
+
+/* CONFIRM */
+.confirm-hero{background:linear-gradient(135deg,var(--teal) 0%,#0D9B89 100%);padding:26px 18px 22px;text-align:center;color:#fff}
+.confirm-hero.orange{background:linear-gradient(135deg,var(--orange) 0%,#F97316 100%)}
+.confirm-icon{width:56px;height:56px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 10px;border:2px solid rgba(255,255,255,.4)}
+.confirm-hero h3{font-family:'DM Serif Display',serif;font-size:19px;font-weight:400;margin-bottom:3px}
+.confirm-hero p{font-size:11.5px;color:rgba(255,255,255,.75)}
+.ref-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 12px;font-size:12.5px;font-weight:600;letter-spacing:.05em;margin-top:8px}
+
+/* MISSED CALL SPECIFIC */
+.missed-call-banner{background:linear-gradient(135deg,var(--orange) 0%,#F97316 100%);padding:16px 18px;color:#fff;display:flex;align-items:center;gap:12px}
+.missed-call-banner .mc-icon{font-size:28px}
+.missed-call-banner h3{font-size:14px;font-weight:700;margin-bottom:2px}
+.missed-call-banner p{font-size:11px;opacity:.85}
+
+.missed-call-number{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:12px;padding:10px 14px;margin:12px 0;text-align:center}
+.missed-call-number .num{font-size:22px;font-weight:700;letter-spacing:.05em;font-family:'Courier New',monospace}
+.missed-call-number p{font-size:10px;opacity:.8;margin-top:2px}
+
+.sms-bubble-wrap{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.sms-bubble{padding:11px 14px;border-radius:14px;font-size:12.5px;line-height:1.55;max-width:85%}
+.sms-bubble.system{background:#fff;border:1px solid var(--border);color:var(--label);border-radius:14px 14px 14px 4px;align-self:flex-start}
+.sms-bubble.patient{background:var(--teal);color:#fff;border-radius:14px 14px 4px 14px;align-self:flex-end}
+.sms-bubble.system.orange-bub{background:var(--orange-lt);border-color:var(--orange-md)}
+.sms-time{font-size:10px;color:var(--muted);padding:0 4px}
+.sms-time.right{text-align:right}
+
+.spam-filter-card{background:#fff;border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.spam-filter-header{padding:12px 16px;background:var(--surface);display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.spam-filter-header .sf-icon{font-size:18px}
+.spam-filter-header h4{font-size:13px;font-weight:600;color:var(--label);flex:1}
+.spam-status-pill{font-size:10.5px;padding:3px 8px;border-radius:20px;font-weight:600}
+.spam-status-pill.pass{background:#DCFCE7;color:#166534}
+.spam-status-pill.block{background:#FEE2E2;color:#991B1B}
+.spam-status-pill.warn{background:#FEF9C3;color:#854D0E}
+.spam-filter-body{padding:10px 16px;font-size:12px;color:var(--muted);line-height:1.5}
+
+/* DASHBOARD */
+.dash-header{background:var(--ink);padding:16px 16px 14px;color:#fff}
+.dash-header .greeting{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:2px}
+.dash-header h3{font-family:'DM Serif Display',serif;font-size:17px;font-weight:400}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:12px 16px;background:#fff;border-bottom:1px solid var(--border)}
+.stat-card{background:var(--surface);border-radius:10px;padding:9px;text-align:center}
+.stat-card .num{font-size:19px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:2px}
+.stat-card .num.green{color:var(--green)}.stat-card .num.teal{color:var(--teal)}.stat-card .num.amber{color:var(--amber)}.stat-card .num.orange{color:var(--orange)}
+.stat-card .lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+
+.apt-list{padding:12px 16px}
+.apt-item{background:#fff;border:1px solid var(--border);border-radius:13px;padding:12px 13px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start}
+.apt-item.arrived{border-left:3px solid var(--green)}
+.apt-item.upcoming{border-left:3px solid var(--teal)}
+.apt-item.missed-call-apt{border-left:3px solid var(--orange)}
+.apt-time-col{text-align:center;min-width:40px}
+.apt-time-col .time{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1}
+.apt-time-col .ampm{font-size:9.5px;color:var(--muted)}
+.apt-info{flex:1}
+.apt-info .name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.apt-info .reason{font-size:11px;color:var(--muted);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.status-pill{display:inline-flex;align-items:center;gap:3px;border-radius:20px;padding:2px 7px;font-size:10px;font-weight:600}
+.status-pill.booked{background:var(--teal-lt);color:var(--teal)}
+.status-pill.arrived{background:#DCFCE7;color:var(--green)}
+.status-pill.upcoming{background:var(--pill);color:var(--label)}
+.status-pill.mc{background:var(--orange-lt);color:var(--orange)}
+.apt-source{display:flex;align-items:center;gap:3px;font-size:9.5px;color:var(--muted);margin-top:3px}
+
+/* ADMIN PANEL */
+.admin-section{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px}
+.admin-section h4{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.toggle-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--label)}
+.toggle-row:last-child{border-bottom:none;padding-bottom:0}
+.toggle{width:38px;height:20px;border-radius:20px;background:var(--teal);position:relative;cursor:pointer}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;right:2px;transition:right .15s}
+.toggle.off{background:var(--border)}.toggle.off::after{right:auto;left:2px}
+.config-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.config-row:last-child{border-bottom:none}
+.config-row .key{color:var(--muted)}.config-row .val{font-weight:600;color:var(--label);font-family:'Courier New',monospace;font-size:11.5px}
+
+/* SCHEMA */
+.schema-canvas{background:#fff;border:1px solid var(--border);border-radius:18px;padding:28px;overflow-x:auto}
+.schema-row{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;margin-bottom:20px}
+.db-table{background:#fff;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;min-width:190px;box-shadow:var(--shadow)}
+.db-table.new-table{border-color:var(--orange);box-shadow:0 0 0 2px rgba(234,88,12,.15)}
+.db-table-header{background:var(--ink);color:#fff;padding:9px 14px;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:7px}
+.db-table-header.teal{background:var(--teal)}.db-table-header.orange{background:var(--orange)}.db-table-header.amber{background:var(--amber)}
+.db-field{padding:6px 14px;font-size:11.5px;color:var(--label);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
+.db-field:last-child{border-bottom:none}
+.db-field .ftype{margin-left:auto;font-size:10px;color:var(--muted);font-family:'Courier New',monospace}
+.pk{background:#FEF9C3;color:#854D0E;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;letter-spacing:.04em}
+.fk{background:var(--teal-lt);color:var(--teal);font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px}
+.uq{background:#F3E8FF;color:#7C3AED;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px}
+.new-badge{background:var(--orange-lt);color:var(--orange);font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;letter-spacing:.03em}
+
+/* API */
+.api-group{margin-bottom:28px}
+.api-group-title{font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--teal-md);display:flex;align-items:center;gap:10px}
+.api-group-title .new-tag-sm{background:var(--orange-lt);color:var(--orange);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;border:1px solid var(--orange-md)}
+.endpoint-card{background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.endpoint-card.new-ep{border-color:var(--orange-md);box-shadow:0 0 0 2px var(--orange-lt)}
+.ep-header{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;transition:background .12s}
+.ep-header:hover{background:var(--surface)}
+.method-badge{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:.04em;min-width:50px;text-align:center;font-family:'Courier New',monospace}
+.GET{background:#DCFCE7;color:#166534}.POST{background:#DBEAFE;color:#1E40AF}.PATCH{background:#FEF9C3;color:#854D0E}.PUT{background:#E0E7FF;color:#3730A3}.DELETE{background:#FEE2E2;color:#991B1B}
+.ep-path{font-family:'Courier New',monospace;font-size:12.5px;color:var(--ink);flex:1}
+.ep-path .param{color:var(--teal)}
+.ep-desc{font-size:11.5px;color:var(--muted);max-width:220px;text-align:right}
+.auth-chip{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;white-space:nowrap}
+.auth-public{background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0}
+.auth-patient{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.auth-staff{background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA}
+.auth-admin{background:#FDF2F8;color:#9D174D;border:1px solid #FBCFE8}
+.auth-system{background:var(--orange-lt);color:var(--orange);border:1px solid var(--orange-md)}
+.ep-body{display:none;border-top:1px solid var(--border);padding:16px;background:var(--surface)}
+.ep-body.open{display:block}
+.ep-body h5{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;margin-bottom:7px;margin-top:12px}
+.ep-body h5:first-child{margin-top:0}
+.code-block{background:var(--ink);color:#A8D5CF;border-radius:8px;padding:12px;font-family:'Courier New',monospace;font-size:11.5px;line-height:1.7;overflow-x:auto}
+.code-block .k{color:#7DD3FC}.code-block .s{color:#86EFAC}.code-block .n{color:#FCA5A5}.code-block .c{color:#6B7280}
+.rule-list{list-style:none}
+.rule-list li{padding:4px 0;font-size:12px;color:var(--label);display:flex;gap:7px;border-bottom:1px solid var(--border)}
+.rule-list li:last-child{border-bottom:none}
+.rule-list li::before{content:'→';color:var(--teal);font-weight:700;flex-shrink:0}
+
+/* CONTENT CARDS */
+.content-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:20px;box-shadow:var(--shadow)}
+.content-card h3{font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+
+/* LEGEND */
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--label)}
+.legend-dot{width:9px;height:9px;border-radius:3px}
+
+/* SCREENS ROW (multiple phones) */
+.screens-row{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.sf-wrap{text-align:center}
+.sf-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.sf-wrap .phone{width:290px}
+.sf-wrap .phone-body{min-height:540px}
+
+/* ALERT BOX */
+.alert-box{border-radius:12px;padding:11px 14px;font-size:12px;line-height:1.5;margin-bottom:12px}
+.alert-box.info{background:var(--teal-lt);border:1px solid var(--teal-md);color:var(--teal)}
+.alert-box.warn{background:#FFFBEB;border:1px solid #FCD34D;color:#92400E}
+.alert-box.danger{background:#FEF2F2;border:1px solid #FECACA;color:var(--red)}
+.alert-box.orange{background:var(--orange-lt);border:1px solid var(--orange-md);color:var(--orange)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="icon">🏥</div>
+    <h1>Clinic Appointment System</h1>
+    <p>Design Reference v2.0</p>
+  </div>
+
+  <div class="section-label">Patient — Online Booking</div>
+  <div class="nav-item active" onclick="show('landing')"><div class="nav-dot"></div>Landing Page</div>
+  <div class="nav-item" onclick="show('date')"><div class="nav-dot"></div>Step 1 — Pick Date</div>
+  <div class="nav-item" onclick="show('slots')"><div class="nav-dot"></div>Step 2 — Pick Slot</div>
+  <div class="nav-item" onclick="show('form')"><div class="nav-dot"></div>Step 3 — Your Details</div>
+  <div class="nav-item" onclick="show('review')"><div class="nav-dot"></div>Step 4 — Review</div>
+  <div class="nav-item" onclick="show('confirmed')"><div class="nav-dot"></div>Step 5 — Confirmed ✓</div>
+
+  <div class="section-label">Patient — Missed Call <span class="nav-badge new">NEW</span></div>
+  <div class="nav-item" onclick="show('mc-how')"><div class="nav-dot"></div>How It Works</div>
+  <div class="nav-item" onclick="show('mc-sms')"><div class="nav-dot"></div>SMS Conversation Flow</div>
+  <div class="nav-item" onclick="show('mc-spam')"><div class="nav-dot"></div>Spam Protection Layers</div>
+  <div class="nav-item" onclick="show('mc-admin')"><div class="nav-dot"></div>Admin Control Panel</div>
+
+  <div class="section-label">Staff Views</div>
+  <div class="nav-item" onclick="show('dashboard')"><div class="nav-dot"></div>Receptionist Dashboard</div>
+  <div class="nav-item" onclick="show('doctor')"><div class="nav-dot"></div>Doctor View</div>
+
+  <div class="section-label">Technical</div>
+  <div class="nav-item" onclick="show('schema')"><div class="nav-dot"></div>Database Schema <span class="nav-badge orange">+4 tables</span></div>
+  <div class="nav-item" onclick="show('api')"><div class="nav-dot"></div>API Reference <span class="nav-badge">25</span></div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ═══ LANDING ══════════════════════════════════════════════ -->
+<div class="screen active" id="screen-landing">
+  <div class="page-header"><h2>Landing Page</h2><p>Patients now see two booking options — online or missed call. Both paths lead to the same appointment system.</p></div>
+  <div class="device-wrap">
+    <div class="device-frame">
+      <div class="device-label">📱 Patient View</div>
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="clinic-hero">
+            <div class="htag">✦ 12 slots available today</div>
+            <h2>Dr. Anil Sharma</h2>
+            <p>MBBS, MD · General Physician & Diabetologist</p>
+          </div>
+          <div class="channels-row">
+            <div class="channel-pill active-channel" onclick="show('date')">
+              <div class="ch-icon">📅</div>Book Online
+            </div>
+            <div class="channel-pill active-channel orange" onclick="show('mc-how')">
+              <div class="ch-icon">📞</div>Missed Call
+            </div>
+            <div class="channel-pill">
+              <div class="ch-icon">🔁</div>Returning
+            </div>
+          </div>
+          <div class="p-content">
+            <div class="doctor-card">
+              <div class="doctor-avatar">👨‍⚕️</div>
+              <div class="doctor-info">
+                <h4>Dr. Anil Sharma</h4>
+                <div class="spec">General Physician</div>
+                <div class="quals">MBBS, MD – AIIMS Delhi · 18 years</div>
+                <div class="rating-row">
+                  <div class="rpill">⭐ 4.9</div>
+                  <div class="rpill">🕐 20 min</div>
+                  <div class="rpill">📍 Meerut</div>
+                </div>
+              </div>
+            </div>
+            <div class="section-title">Clinic Hours</div>
+            <div class="info-row">🕐 Morning <span class="value">9:00 AM – 1:00 PM</span></div>
+            <div class="info-row">🕔 Evening <span class="value">5:00 PM – 8:00 PM</span></div>
+            <div class="info-row">📅 Days <span class="value">Mon – Sat</span></div>
+            <div class="info-row">📍 Civil Lines, Meerut</div>
+            <div style="padding-top:14px">
+              <button class="btn-primary" onclick="show('date')">📅 Book Online</button>
+              <button class="btn-primary orange" style="margin-top:8px" onclick="show('mc-how')">📞 Give a Missed Call</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annotations">
+      <div class="ann-title">Dual Booking Channels</div>
+      <div class="ann-item"><div class="ann-num teal">1</div><div class="ann-text"><strong>Channel Switcher</strong><span>Three tabs at the top of the landing page. Online booking, Missed Call, and Returning Patient. Same destination, different paths.</span></div></div>
+      <div class="ann-item"><div class="ann-num orange">2</div><div class="ann-text"><strong>Missed Call CTA</strong><span>Orange accent distinguishes the missed call path from online booking. Visually telegraphs "different, simpler." Works for patients with no internet.</span></div></div>
+      <div class="ann-item"><div class="ann-num teal">3</div><div class="ann-text"><strong>Zero Friction</strong><span>Missed call requires only a phone call. No form, no internet, no app download. Ideal for elderly patients and those in low-connectivity areas.</span></div></div>
+      <div class="ann-item"><div class="ann-num teal">4</div><div class="ann-text"><strong>Same Backend</strong><span>Both booking paths write to the same appointments table. Staff dashboard shows source of each booking (online / missed call / walk-in).</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ONLINE BOOKING STEPS (abridged, navigable) ══════════ -->
+<div class="screen" id="screen-date">
+  <div class="page-header"><h2>Step 1 — Select Date</h2><p>Online booking flow. Unchanged from v1.</p></div>
+  <div class="flow-steps">
+    <div class="flow-step done"><div class="sn">✓</div> Landing</div><div class="flow-arrow">›</div>
+    <div class="flow-step current"><div class="sn">1</div> Pick Date</div><div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="sn">2</div> Pick Slot</div><div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="sn">3</div> Details</div><div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="sn">4</div> Review</div><div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="sn">5</div> Confirmed</div>
+  </div>
+  <div class="device-wrap">
+    <div class="device-frame">
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="app-bar"><div class="app-bar-back" onclick="show('landing')">←</div><div><h3>Book Appointment</h3><div class="app-bar-sub">Dr. Anil Sharma</div></div></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+          <div class="p-content">
+            <div class="section-title">Select a Date</div>
+            <div class="cal-nav"><button>‹</button><span>March 2026</span><button>›</button></div>
+            <div class="cal-grid">
+              <div class="cal-day-name">Su</div><div class="cal-day-name">Mo</div><div class="cal-day-name">Tu</div><div class="cal-day-name">We</div><div class="cal-day-name">Th</div><div class="cal-day-name">Fr</div><div class="cal-day-name">Sa</div>
+              <div class="cal-day dis">1</div><div class="cal-day has">2</div><div class="cal-day has">3</div><div class="cal-day has">4</div><div class="cal-day has">5</div><div class="cal-day has">6</div><div class="cal-day dis">7</div>
+              <div class="cal-day dis">8</div><div class="cal-day has today">9</div><div class="cal-day has">10</div><div class="cal-day has">11</div><div class="cal-day has">12</div><div class="cal-day dis">13</div><div class="cal-day dis">14</div>
+              <div class="cal-day dis">15</div><div class="cal-day has sel">16</div><div class="cal-day has">17</div><div class="cal-day dis">18</div><div class="cal-day has">19</div><div class="cal-day has">20</div><div class="cal-day dis">21</div>
+              <div class="cal-day dis">22</div><div class="cal-day has">23</div><div class="cal-day has">24</div><div class="cal-day has">25</div><div class="cal-day has">26</div><div class="cal-day has">27</div><div class="cal-day dis">28</div>
+            </div>
+            <button class="btn-primary" style="margin-top:16px" onclick="show('slots')">View Available Slots →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annotations"><div class="ann-title">Note</div><div class="ann-item"><div class="ann-num teal">→</div><div class="ann-text"><strong>Online flow unchanged</strong><span>Steps 1–5 of the online booking flow are identical to v1. Navigate through them using the buttons or jump to the missed call screens via the sidebar.</span></div></div></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-slots">
+  <div class="page-header"><h2>Step 2 — Select Slot</h2><p>Available time slots for the chosen date.</p></div>
+  <div class="flow-steps">
+    <div class="flow-step done"><div class="sn">✓</div> Landing</div><div class="flow-arrow">›</div>
+    <div class="flow-step done"><div class="sn">✓</div> Pick Date</div><div class="flow-arrow">›</div>
+    <div class="flow-step current"><div class="sn">2</div> Pick Slot</div><div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="sn">3</div> Details</div><div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="sn">4</div> Review</div><div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="sn">5</div> Confirmed</div>
+  </div>
+  <div class="device-wrap">
+    <div class="device-frame">
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="app-bar"><div class="app-bar-back" onclick="show('date')">←</div><div><h3>Available Slots</h3><div class="app-bar-sub">Mon, 16 March 2026</div></div></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+          <div class="p-content">
+            <div class="section-title">Morning · 9:00 AM – 1:00 PM</div>
+            <div class="slots-grid" style="margin-bottom:14px">
+              <div class="slot-btn">9:00 AM</div><div class="slot-btn">9:20 AM</div><div class="slot-btn">9:40 AM</div>
+              <div class="slot-btn">10:00 AM</div><div class="slot-btn sel">10:20 AM</div><div class="slot-btn">10:40 AM</div>
+              <div class="slot-btn">11:00 AM</div><div class="slot-btn few">11:20 AM</div><div class="slot-btn">12:00 PM</div>
+            </div>
+            <div class="section-title">Evening · 5:00 PM – 8:00 PM</div>
+            <div class="slots-grid">
+              <div class="slot-btn">5:00 PM</div><div class="slot-btn">5:20 PM</div><div class="slot-btn">5:40 PM</div>
+              <div class="slot-btn">6:00 PM</div><div class="slot-btn">6:20 PM</div><div class="slot-btn">7:00 PM</div>
+            </div>
+            <button class="btn-primary" style="margin-top:14px" onclick="show('form')">Continue with 10:20 AM →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-form">
+  <div class="page-header"><h2>Step 3 — Patient Details</h2><p>Minimal form. Only name and phone required.</p></div>
+  <div class="flow-steps">
+    <div class="flow-step done"><div class="sn">✓</div> Landing</div><div class="flow-arrow">›</div>
+    <div class="flow-step done"><div class="sn">✓</div> Pick Date</div><div class="flow-arrow">›</div>
+    <div class="flow-step done"><div class="sn">✓</div> Pick Slot</div><div class="flow-arrow">›</div>
+    <div class="flow-step current"><div class="sn">3</div> Details</div><div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="sn">4</div> Review</div><div class="flow-arrow">›</div>
+    <div class="flow-step"><div class="sn">5</div> Confirmed</div>
+  </div>
+  <div class="device-wrap">
+    <div class="device-frame">
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="app-bar"><div class="app-bar-back" onclick="show('slots')">←</div><div><h3>Your Details</h3><div class="app-bar-sub">10:20 AM · 16 Mar 2026</div></div></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
+          <div class="p-content">
+            <div class="form-group"><label class="form-label">Full Name</label><input class="form-input filled" value="Rahul Gupta"></div>
+            <div class="form-group"><label class="form-label">Mobile Number</label><input class="form-input filled" value="+91 98765 43210"></div>
+            <div class="form-group"><label class="form-label">Date of Birth <span class="opt">(optional)</span></label><input class="form-input" placeholder="DD / MM / YYYY"></div>
+            <div class="form-group"><label class="form-label">Reason for Visit <span class="opt">(optional)</span></label><textarea class="form-input" style="height:60px;resize:none" placeholder="e.g. fever, diabetes follow-up..."></textarea></div>
+            <div class="alert-box info" style="margin-bottom:12px">🔒 Data protected under DPDPA 2023.</div>
+            <button class="btn-primary" onclick="show('review')">Review Booking →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-review">
+  <div class="page-header"><h2>Step 4 — Review & Confirm</h2><p>Summary before appointment is created.</p></div>
+  <div class="device-wrap">
+    <div class="device-frame">
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="app-bar"><div class="app-bar-back" onclick="show('form')">←</div><div><h3>Review Booking</h3></div></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:95%"></div></div>
+          <div class="p-content">
+            <div class="summary-card">
+              <h4>📋 Appointment</h4>
+              <div class="summary-row"><span class="key">Doctor</span><span class="val">Dr. Anil Sharma</span></div>
+              <div class="summary-row"><span class="key">Date</span><span class="val">Mon, 16 Mar 2026</span></div>
+              <div class="summary-row"><span class="key">Time</span><span class="val">10:20 – 10:40 AM</span></div>
+              <div class="summary-row"><span class="key">Location</span><span class="val">Civil Lines, Meerut</span></div>
+            </div>
+            <div class="summary-card blue">
+              <h4>👤 Patient</h4>
+              <div class="summary-row"><span class="key">Name</span><span class="val">Rahul Gupta</span></div>
+              <div class="summary-row"><span class="key">Phone</span><span class="val">+91 98765 43210</span></div>
+            </div>
+            <div class="alert-box info">📱 Confirmation SMS sent to +91 98765 43210 immediately.</div>
+            <button class="btn-primary" onclick="show('confirmed')">✓ Confirm Appointment</button>
+            <button class="btn-secondary" onclick="show('form')">← Edit Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-confirmed">
+  <div class="page-header"><h2>Step 5 — Booking Confirmed ✓</h2><p>Appointment created. SMS sent. Reference code shown.</p></div>
+  <div class="device-wrap">
+    <div class="device-frame">
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="confirm-hero">
+            <div class="confirm-icon">✓</div>
+            <h3>Appointment Confirmed!</h3>
+            <p>Successfully booked via online portal.</p>
+            <div class="ref-badge">APT-2026-01423</div>
+          </div>
+          <div class="p-content">
+            <div class="summary-card">
+              <h4>📅 Your Appointment</h4>
+              <div class="summary-row"><span class="key">Doctor</span><span class="val">Dr. Anil Sharma</span></div>
+              <div class="summary-row"><span class="key">Date</span><span class="val">Mon, 16 Mar 2026</span></div>
+              <div class="summary-row"><span class="key">Time</span><span class="val">10:20 AM</span></div>
+              <div class="summary-row"><span class="key">Ref</span><span class="val" style="color:var(--teal);font-family:monospace">APT-2026-01423</span></div>
+            </div>
+            <div class="alert-box info">✅ SMS sent. Reminders at 48hrs & 2hrs before.</div>
+            <button class="btn-primary">+ Add to Calendar</button>
+            <button class="btn-secondary" onclick="show('landing')">← Back to Home</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MISSED CALL: HOW IT WORKS ════════════════════════════ -->
+<div class="screen" id="screen-mc-how">
+  <div class="page-header">
+    <h2>Missed Call Booking <span class="new-tag">NEW</span></h2>
+    <p>How the missed call → SMS reply flow works end-to-end. Zero cost to patient. No internet required.</p>
+  </div>
+  <div class="device-wrap">
+    <div class="device-frame">
+      <div class="device-label">📱 Patient's Phone</div>
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="missed-call-banner">
+            <div class="mc-icon">📞</div>
+            <div>
+              <h3>Book via Missed Call</h3>
+              <p>Free for you. No internet. Any phone.</p>
+            </div>
+          </div>
+          <div class="p-content">
+            <div class="section-title">How to Book in 3 Steps</div>
+
+            <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px">
+              <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">1</div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px">Give a Missed Call</div>
+                  <div style="font-size:11.5px;color:var(--muted);line-height:1.5">Call the clinic's dedicated number and hang up. <b>Costs you ₹0.</b> The call won't connect — just ring and cut.</div>
+                </div>
+              </div>
+              <div class="missed-call-number">
+                <div class="num" style="color:var(--orange)">📞 0120-XXXXX-XX</div>
+                <p style="color:var(--muted)">Clinic's dedicated missed call number</p>
+              </div>
+            </div>
+
+            <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px">
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">2</div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px">Receive SMS with Slot Options</div>
+                  <div style="font-size:11.5px;color:var(--muted);line-height:1.5">Within 30 seconds, you'll receive an SMS with 3 available appointment slots to choose from.</div>
+                </div>
+              </div>
+              <div style="background:var(--surface);border-radius:10px;padding:10px;margin-top:10px;font-size:11.5px;color:var(--label);line-height:1.7;font-style:italic;border:1px dashed var(--border)">
+                "Dr. Sharma Clinic: Reply to book — Reply <b>1A3B</b> for Mon 16 Mar 10:20AM, <b>2A3B</b> for Mon 16 Mar 11:00AM, <b>3A3B</b> for Tue 17 Mar 9:00AM. Valid 15 mins."
+              </div>
+            </div>
+
+            <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px">
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">3</div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px">Reply to Confirm</div>
+                  <div style="font-size:11.5px;color:var(--muted);line-height:1.5">Reply with your choice code (e.g. <b>1A3B</b>) and your appointment is instantly confirmed with a reference number.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert-box warn">⏱ Slot options expire in 15 minutes. If you don't reply, just give another missed call.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annotations">
+      <div class="ann-title">System Flow</div>
+      <div class="ann-item"><div class="ann-num orange">1</div><div class="ann-text"><strong>Webhook Trigger</strong><span>MSG91 detects the missed call (0–3 second duration) and immediately fires a POST webhook to your backend API endpoint.</span></div></div>
+      <div class="ann-item"><div class="ann-num orange">2</div><div class="ann-text"><strong>Spam Checks (6 layers)</strong><span>Backend runs all spam filters synchronously: blacklist → rate limit → number validation → velocity check → duplicate appointment check. Takes ~50ms.</span></div></div>
+      <div class="ann-item"><div class="ann-num orange">3</div><div class="ann-text"><strong>Slot Computation</strong><span>System fetches next 3 available slots using the same slot generation algorithm used by the online booking engine. No separate logic needed.</span></div></div>
+      <div class="ann-item"><div class="ann-num orange">4</div><div class="ann-text"><strong>Session Token</strong><span>A unique 4-char token (e.g. "A3B7") is generated and embedded in the SMS options. Patient's reply must include the token — prevents spoofing.</span></div></div>
+      <div class="ann-item"><div class="ann-num green">5</div><div class="ann-text"><strong>Auto-Expiry</strong><span>A cron job runs every 5 minutes to expire sessions older than 15 minutes. Expired sessions release their tentatively held slots.</span></div></div>
+      <div class="ann-item"><div class="ann-num green">6</div><div class="ann-text"><strong>New Number Delay</strong><span>First-time callers (not in patients table) wait 60 seconds before receiving the SMS. Invisible to humans, blocks automated dialers.</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MISSED CALL: SMS CONVERSATION ════════════════════════ -->
+<div class="screen" id="screen-mc-sms">
+  <div class="page-header">
+    <h2>SMS Conversation Flow <span class="new-tag">NEW</span></h2>
+    <p>The complete SMS exchange between system and patient. Four scenarios: success, expired, duplicate, and cancel.</p>
+  </div>
+  <div class="screens-row">
+
+    <div class="sf-wrap">
+      <div class="sf-label">✅ Scenario 1: Successful Booking</div>
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="app-bar"><h3 style="font-size:13px">SMS — Clinic Booking</h3></div>
+          <div class="sms-bubble-wrap">
+            <div class="sms-time">9:41 AM — Patient gives missed call</div>
+            <div class="sms-bubble system orange-bub">
+              Dr. Sharma Clinic: 3 slots available. Reply to book:<br><br>
+              <b>1A3B</b> → Mon 16 Mar, 10:20 AM<br>
+              <b>2A3B</b> → Mon 16 Mar, 11:00 AM<br>
+              <b>3A3B</b> → Tue 17 Mar, 09:00 AM<br><br>
+              Reply within 15 mins. Reply STOP to opt out.
+            </div>
+            <div class="sms-time right">9:43 AM — Patient replies</div>
+            <div class="sms-bubble patient">1A3B</div>
+            <div class="sms-time">9:43 AM — System responds</div>
+            <div class="sms-bubble system">
+              ✅ Confirmed! Dr. Sharma on Mon 16 Mar at 10:20 AM.<br>
+              Ref: <b>APT-2026-01424</b><br>
+              Address: Civil Lines, Meerut.<br>
+              Reminder 48hrs before. Reply CANCEL to cancel.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sf-wrap">
+      <div class="sf-label">⏱ Scenario 2: Session Expired</div>
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="app-bar"><h3 style="font-size:13px">SMS — Clinic Booking</h3></div>
+          <div class="sms-bubble-wrap">
+            <div class="sms-time">9:41 AM — Missed call</div>
+            <div class="sms-bubble system orange-bub">
+              Dr. Sharma Clinic: 3 slots available.<br>
+              <b>1B7K</b> → Mon 16 Mar, 10:20 AM<br>
+              <b>2B7K</b> → Mon 16 Mar, 11:00 AM<br>
+              <b>3B7K</b> → Tue 17 Mar, 09:00 AM<br>
+              Reply within 15 mins.
+            </div>
+            <div class="sms-time right">10:02 AM — Patient replies late</div>
+            <div class="sms-bubble patient">1B7K</div>
+            <div class="sms-time">10:02 AM</div>
+            <div class="sms-bubble system" style="border-color:#FCD34D;background:#FFFBEB">
+              ⏱ Sorry, your session expired (15 min limit). Give a missed call again to see fresh slot options.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sf-wrap">
+      <div class="sf-label">🔁 Scenario 3: Already Has Appointment</div>
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="app-bar"><h3 style="font-size:13px">SMS — Clinic Booking</h3></div>
+          <div class="sms-bubble-wrap">
+            <div class="sms-time">9:41 AM — Missed call</div>
+            <div class="sms-bubble system" style="background:#EFF6FF;border-color:#BFDBFE">
+              ℹ️ You already have an upcoming appointment:<br><br>
+              Dr. Sharma — Tue 17 Mar at 11:00 AM<br>
+              Ref: APT-2026-01398<br><br>
+              Reply CANCEL to cancel it, or call +91-121-XXXXXXX to reschedule.
+            </div>
+            <div class="sms-time" style="font-size:11px;color:var(--muted)">No new appointment created. Existing one shown.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sf-wrap">
+      <div class="sf-label">❌ Scenario 4: Cancel via SMS</div>
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="app-bar"><h3 style="font-size:13px">SMS — Clinic Booking</h3></div>
+          <div class="sms-bubble-wrap">
+            <div class="sms-time">2 days after booking</div>
+            <div class="sms-bubble system orange-bub">
+              🔔 Reminder: Dr. Sharma tomorrow Mon 16 Mar at 10:20 AM. Reply CANCEL to cancel.
+            </div>
+            <div class="sms-time right">Patient replies</div>
+            <div class="sms-bubble patient">CANCEL</div>
+            <div class="sms-time">System responds</div>
+            <div class="sms-bubble system" style="background:#FEF2F2;border-color:#FECACA">
+              ✅ Appointment APT-2026-01424 on Mon 16 Mar cancelled. Give a missed call anytime to rebook.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ MISSED CALL: SPAM PROTECTION ════════════════════════ -->
+<div class="screen" id="screen-mc-spam">
+  <div class="page-header">
+    <h2>Spam Protection Layers <span class="new-tag">NEW</span></h2>
+    <p>6 layers of protection. Each layer runs in sequence. A call blocked early costs nothing in SMS credits.</p>
+  </div>
+  <div class="device-wrap">
+    <div class="device-frame">
+      <div class="device-label">🛡️ Filter Pipeline (per incoming call)</div>
+      <div class="phone" style="border-radius:18px">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>Filter Status</span><span>Live</span></div>
+        <div class="phone-body">
+          <div class="p-content" style="padding-top:14px">
+
+            <div class="spam-filter-card">
+              <div class="spam-filter-header">
+                <div class="sf-icon">🌐</div>
+                <h4>Layer 1 — Telephony Filter</h4>
+                <span class="spam-status-pill pass">PROVIDER</span>
+              </div>
+              <div class="spam-filter-body">Rejects non-Indian numbers, international VoIP, and calls longer than 4 seconds. Handled by MSG91 before webhook fires. <b>Zero cost even if triggered.</b></div>
+            </div>
+
+            <div class="spam-filter-card">
+              <div class="spam-filter-header">
+                <div class="sf-icon">⚫</div>
+                <h4>Layer 2 — Blacklist Check</h4>
+                <span class="spam-status-pill pass">DB LOOKUP</span>
+              </div>
+              <div class="spam-filter-body">Checks phone_blacklist table. Permanent bans and temporary bans with expiry. Staff can add numbers via admin panel. Auto-populated after 5 violations.</div>
+            </div>
+
+            <div class="spam-filter-card">
+              <div class="spam-filter-header">
+                <div class="sf-icon">⏱</div>
+                <h4>Layer 3 — Rate Limit</h4>
+                <span class="spam-status-pill warn">2/day · 5/week</span>
+              </div>
+              <div class="spam-filter-body">Max 2 missed calls from same number in 24hrs, 5 in 7 days. Silent block — no SMS, no error. Configurable in admin settings without code change.</div>
+            </div>
+
+            <div class="spam-filter-card">
+              <div class="spam-filter-header">
+                <div class="sf-icon">📋</div>
+                <h4>Layer 4 — Number Validation</h4>
+                <span class="spam-status-pill pass">INSTANT</span>
+              </div>
+              <div class="spam-filter-body">Format check (must be 6/7/8/9 prefix, 10 digits). MSG91 DND registry check. Landlines rejected instantly. Takes &lt;5ms.</div>
+            </div>
+
+            <div class="spam-filter-card">
+              <div class="spam-filter-header">
+                <div class="sf-icon">⚡</div>
+                <h4>Layer 5 — Velocity Detection</h4>
+                <span class="spam-status-pill warn">15 calls/10 min</span>
+              </div>
+              <div class="spam-filter-body">System-wide burst: if &gt;15 calls in any 10-minute window, auto-pause for 30 mins + SMS alert to admin. Catches SIM farm attacks rotating multiple numbers.</div>
+            </div>
+
+            <div class="spam-filter-card">
+              <div class="spam-filter-header">
+                <div class="sf-icon">📅</div>
+                <h4>Layer 6 — Duplicate Guard</h4>
+                <span class="spam-status-pill pass">BUSINESS LOGIC</span>
+              </div>
+              <div class="spam-filter-body">If patient already has an upcoming booked/confirmed appointment, skip new booking and SMS their existing appointment details instead. Protects slot inventory.</div>
+            </div>
+
+            <div class="alert-box warn" style="margin-top:4px">📊 All blocked calls are logged in missed_call_events with block_reason for admin analytics.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annotations">
+      <div class="ann-title">What Gets Through?</div>
+      <div class="ann-item"><div class="ann-num green">✓</div><div class="ann-text"><strong>Genuine Patient</strong><span>Passes all 6 layers. Gets SMS within 30 seconds. Books appointment with one reply.</span></div></div>
+      <div class="ann-item"><div class="ann-num red">✗</div><div class="ann-text"><strong>International Autodialer</strong><span>Blocked at Layer 1 (telephony). Never reaches your server. Zero cost.</span></div></div>
+      <div class="ann-item"><div class="ann-num red">✗</div><div class="ann-text"><strong>Repeat Spammer (Same SIM)</strong><span>Blocked at Layer 3 after 2 calls/day. Auto-blacklisted after 5 violations.</span></div></div>
+      <div class="ann-item"><div class="ann-num red">✗</div><div class="ann-text"><strong>SIM Farm Attack</strong><span>Multiple numbers rotating quickly hit Layer 5 velocity detection. System pauses + admin alerted within 10 minutes.</span></div></div>
+      <div class="ann-item"><div class="ann-num orange">→</div><div class="ann-text"><strong>Accidental Double Call</strong><span>Patient who already has an appointment gets their existing appointment details shown. No duplicate booking created.</span></div></div>
+      <div class="ann-item"><div class="ann-num orange">→</div><div class="ann-text"><strong>Token Spoofing</strong><span>Someone who randomly texts the clinic number without the token gets no response. Session token required to book.</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MISSED CALL: ADMIN PANEL ════════════════════════════ -->
+<div class="screen" id="screen-mc-admin">
+  <div class="page-header">
+    <h2>Admin Control Panel <span class="new-tag">NEW</span></h2>
+    <p>Admin can configure all spam thresholds, view daily reports, and manage the blacklist without touching code.</p>
+  </div>
+  <div class="device-wrap">
+    <div class="device-frame">
+      <div class="device-label">💻 Admin Panel — Missed Call Settings</div>
+      <div class="phone" style="border-radius:18px">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>Admin Panel</span><span>●</span></div>
+        <div class="phone-body">
+          <div class="dash-header">
+            <div class="greeting">Missed Call System — Today</div>
+            <h3>Analytics & Settings</h3>
+          </div>
+          <div class="stat-row">
+            <div class="stat-card"><div class="num orange">24</div><div class="lbl">Received</div></div>
+            <div class="stat-card"><div class="num green">11</div><div class="lbl">Booked</div></div>
+            <div class="stat-card"><div class="num" style="color:var(--red)">6</div><div class="lbl">Blocked</div></div>
+          </div>
+          <div class="p-content">
+            <div class="admin-section">
+              <h4>⚙️ Spam Thresholds</h4>
+              <div class="config-row"><span class="key">Max calls / number / 24h</span><span class="val">2</span></div>
+              <div class="config-row"><span class="key">Max calls / number / 7d</span><span class="val">5</span></div>
+              <div class="config-row"><span class="key">Session expiry (mins)</span><span class="val">15</span></div>
+              <div class="config-row"><span class="key">Burst threshold (10min)</span><span class="val">15</span></div>
+              <div class="config-row"><span class="key">Auto-blacklist violations</span><span class="val">5</span></div>
+              <div class="config-row"><span class="key">New number delay (secs)</span><span class="val">60</span></div>
+            </div>
+            <div class="admin-section">
+              <h4>🔔 System Controls</h4>
+              <div class="toggle-row">Missed call system ON/OFF <div class="toggle"></div></div>
+              <div class="toggle-row">New number delay <div class="toggle"></div></div>
+              <div class="toggle-row">Auto-blacklist on 5 violations <div class="toggle"></div></div>
+              <div class="toggle-row">Burst alert SMS to admin <div class="toggle"></div></div>
+            </div>
+            <div class="admin-section">
+              <h4>⛔ Blacklist (3 entries)</h4>
+              <div style="font-size:12px;color:var(--muted)">
+                <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>+91 98765 XXXXX</span><span style="color:var(--red)">Auto-velocity</span></div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>+91 70123 XXXXX</span><span style="color:var(--red)">Manual</span></div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0"><span>+91 88812 XXXXX</span><span style="color:var(--amber)">Temp · 2d left</span></div>
+              </div>
+              <button style="width:100%;margin-top:10px;padding:8px;border:1px dashed var(--border);border-radius:10px;background:none;font-size:12px;color:var(--muted);cursor:pointer">+ Add to Blacklist</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annotations">
+      <div class="ann-title">Admin Capabilities</div>
+      <div class="ann-item"><div class="ann-num orange">1</div><div class="ann-text"><strong>Live Thresholds</strong><span>All spam thresholds are stored in missed_call_config table. Admin changes take effect immediately — no code deployment, no server restart.</span></div></div>
+      <div class="ann-item"><div class="ann-num orange">2</div><div class="ann-text"><strong>Master Kill Switch</strong><span>One toggle disables the entire missed call system instantly. Useful during a spam attack while you investigate. System resumes from where it left off.</span></div></div>
+      <div class="ann-item"><div class="ann-num orange">3</div><div class="ann-text"><strong>Blacklist Management</strong><span>Staff can add numbers manually with a note. Temporary bans auto-expire. Permanent bans stay until manually removed. All changes are audit-logged.</span></div></div>
+      <div class="ann-item"><div class="ann-num green">4</div><div class="ann-text"><strong>Daily Analytics</strong><span>Stats show received vs booked vs blocked. Conversion rate visible at a glance. If blocked count spikes, admin investigates.</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RECEPTIONIST DASHBOARD ═══════════════════════════════ -->
+<div class="screen" id="screen-dashboard">
+  <div class="page-header">
+    <h2>Receptionist Dashboard</h2>
+    <p>Now shows booking source (online / missed call / walk-in) on each appointment card.</p>
+  </div>
+  <div class="device-wrap">
+    <div class="device-frame">
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>10:15</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="dash-header">
+            <div class="greeting">Monday, 16 March 2026</div>
+            <h3>Today's Appointments</h3>
+          </div>
+          <div class="stat-row">
+            <div class="stat-card"><div class="num teal">16</div><div class="lbl">Booked</div></div>
+            <div class="stat-card"><div class="num green">6</div><div class="lbl">Arrived</div></div>
+            <div class="stat-card"><div class="num orange">5</div><div class="lbl">Missed Call</div></div>
+          </div>
+          <div class="apt-list">
+            <div class="apt-item arrived">
+              <div class="apt-time-col"><div class="time">9:00</div><div class="ampm">AM</div></div>
+              <div class="apt-info"><div class="name">Priya Singh</div><div class="reason">Fever, cold, cough</div><span class="status-pill arrived">✓ Arrived</span><div class="apt-source">📅 Online</div></div>
+            </div>
+            <div class="apt-item missed-call-apt">
+              <div class="apt-time-col"><div class="time">9:20</div><div class="ampm">AM</div></div>
+              <div class="apt-info"><div class="name">Suresh Kumar</div><div class="reason">—</div><span class="status-pill mc">● Missed Call</span><div class="apt-source">📞 Missed call · APT-2026-01424</div></div>
+            </div>
+            <div class="apt-item upcoming">
+              <div class="apt-time-col"><div class="time">10:20</div><div class="ampm">AM</div></div>
+              <div class="apt-info"><div class="name">Rahul Gupta</div><div class="reason">Diabetes follow-up</div><span class="status-pill booked">● Booked</span><div class="apt-source">📅 Online</div></div>
+            </div>
+            <div class="apt-item missed-call-apt">
+              <div class="apt-time-col"><div class="time">11:00</div><div class="ampm">AM</div></div>
+              <div class="apt-info"><div class="name">Kamla Devi</div><div class="reason">—</div><span class="status-pill mc">● Missed Call</span><div class="apt-source">📞 Missed call · APT-2026-01428</div></div>
+            </div>
+          </div>
+          <div style="padding:0 16px 16px"><button class="btn-primary">+ Book Walk-in</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="annotations">
+      <div class="ann-title">What Changed</div>
+      <div class="ann-item"><div class="ann-num orange">1</div><div class="ann-text"><strong>Booking Source Tag</strong><span>Each appointment card now shows how it was booked: 📅 Online, 📞 Missed Call, or 🚶 Walk-in. Helps staff know what context to expect.</span></div></div>
+      <div class="ann-item"><div class="ann-num orange">2</div><div class="ann-text"><strong>No Reason for Missed Call</strong><span>Missed call appointments don't have a reason for visit — patient didn't enter one. Staff should ask on arrival.</span></div></div>
+      <div class="ann-item"><div class="ann-num orange">3</div><div class="ann-text"><strong>Missed Call Counter</strong><span>Stat bar now shows today's missed call bookings separately so staff can see channel breakdown at a glance.</span></div></div>
+      <div class="ann-item"><div class="ann-num teal">4</div><div class="ann-text"><strong>Same Actions Available</strong><span>Mark arrived, reschedule, cancel — all available on missed call appointments just like online ones.</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DOCTOR VIEW ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-doctor">
+  <div class="page-header"><h2>Doctor's View</h2><p>Read-only schedule. Unchanged except booking source visible on patient card.</p></div>
+  <div class="device-wrap">
+    <div class="device-frame">
+      <div class="phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-status"><span>10:15</span><span>●●● 100%</span></div>
+        <div class="phone-body">
+          <div class="dash-header"><div class="greeting">Dr. Anil Sharma · Today</div><h3>My Schedule</h3></div>
+          <div class="stat-row">
+            <div class="stat-card"><div class="num teal">16</div><div class="lbl">Today</div></div>
+            <div class="stat-card"><div class="num green">6</div><div class="lbl">Seen</div></div>
+            <div class="stat-card"><div class="num">10</div><div class="lbl">Remaining</div></div>
+          </div>
+          <div class="p-content">
+            <div style="background:linear-gradient(135deg,var(--teal),#0D9B89);border-radius:12px;padding:13px;color:#fff;margin-bottom:12px">
+              <div style="font-size:10px;opacity:.75;margin-bottom:3px">▶ NEXT PATIENT</div>
+              <div style="font-size:15px;font-weight:700">Rahul Gupta</div>
+              <div style="font-size:11.5px;opacity:.85">10:20 AM · Diabetes follow-up · 📅 Online</div>
+            </div>
+            <div class="section-title">Upcoming</div>
+            <div class="apt-item" style="margin-bottom:7px">
+              <div class="apt-time-col"><div class="time">10:40</div><div class="ampm">AM</div></div>
+              <div class="apt-info"><div class="name">Meera Joshi</div><div class="reason">Blood pressure check</div><div class="apt-source">📅 Online</div></div>
+            </div>
+            <div class="apt-item missed-call-apt" style="margin-bottom:7px">
+              <div class="apt-time-col"><div class="time">11:00</div><div class="ampm">AM</div></div>
+              <div class="apt-info"><div class="name">Kamla Devi</div><div class="reason">No reason provided</div><div class="apt-source">📞 Missed Call</div></div>
+            </div>
+            <div class="apt-item" style="margin-bottom:7px">
+              <div class="apt-time-col"><div class="time">11:20</div><div class="ampm">AM</div></div>
+              <div class="apt-info"><div class="name">Sunil Rawat</div><div class="reason">Knee pain</div><div class="apt-source">🚶 Walk-in</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annotations">
+      <div class="ann-item"><div class="ann-num orange">→</div><div class="ann-text"><strong>Missed Call Patients</strong><span>Doctor can see which patients came via missed call and that no reason was provided. Can prepare by asking on arrival.</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DATABASE SCHEMA ══════════════════════════════════════ -->
+<div class="screen" id="screen-schema">
+  <div class="page-header">
+    <h2>Database Schema <span class="new-tag">+4 New Tables</span></h2>
+    <p>Original 8 tables plus 4 new missed call tables. Orange border = new in v2.</p>
+  </div>
+  <div class="schema-canvas">
+    <div style="margin-bottom:16px;font-size:13px;font-weight:600;color:var(--teal)">── Original Tables (v1) ──────────────────────────────────</div>
+    <div class="schema-row">
+      <div class="db-table">
+        <div class="db-table-header">👤 users</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="uq">UQ</span> email <span class="ftype">VARCHAR</span></div>
+        <div class="db-field">password_hash <span class="ftype">VARCHAR</span></div>
+        <div class="db-field">role <span class="ftype">ENUM</span></div>
+        <div class="db-field">is_active <span class="ftype">BOOL</span></div>
+      </div>
+      <div class="db-table">
+        <div class="db-table-header teal">🏥 doctors</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="fk">FK</span> user_id <span class="ftype">UUID</span></div>
+        <div class="db-field">display_name <span class="ftype">VARCHAR</span></div>
+        <div class="db-field">specialization <span class="ftype">VARCHAR</span></div>
+        <div class="db-field">photo_url <span class="ftype">VARCHAR</span></div>
+      </div>
+      <div class="db-table">
+        <div class="db-table-header">📅 schedules</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="fk">FK</span> doctor_id <span class="ftype">UUID</span></div>
+        <div class="db-field">day_of_week <span class="ftype">ENUM</span></div>
+        <div class="db-field">morning_start/end <span class="ftype">TIME</span></div>
+        <div class="db-field">slot_duration_mins <span class="ftype">SMALLINT</span></div>
+      </div>
+      <div class="db-table">
+        <div class="db-table-header teal">🧑 patients</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="uq">UQ</span> phone <span class="ftype">VARCHAR</span></div>
+        <div class="db-field">full_name <span class="ftype">VARCHAR</span></div>
+        <div class="db-field">otp_code <span class="ftype">VARCHAR</span></div>
+        <div class="db-field">otp_expires_at <span class="ftype">TIMESTAMPTZ</span></div>
+      </div>
+    </div>
+    <div class="schema-row">
+      <div class="db-table" style="border-color:var(--teal);box-shadow:0 0 0 2px rgba(10,123,108,.15)">
+        <div class="db-table-header teal">📋 appointments ★</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="fk">FK</span> patient_id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="fk">FK</span> doctor_id <span class="ftype">UUID</span></div>
+        <div class="db-field">appointment_date <span class="ftype">DATE</span></div>
+        <div class="db-field">slot_time <span class="ftype">TIME</span></div>
+        <div class="db-field">status <span class="ftype">ENUM</span></div>
+        <div class="db-field">booking_channel <span class="ftype">ENUM <span class="new-badge">+missed_call</span></span></div>
+        <div class="db-field"><span class="uq">UQ</span> dr+date+slot <span class="ftype">NO DUPE ★</span></div>
+        <div class="db-field"><span class="uq">UQ</span> reference_code <span class="ftype">VARCHAR</span></div>
+      </div>
+      <div class="db-table">
+        <div class="db-table-header amber">🔔 notifications</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="fk">FK</span> appointment_id <span class="ftype">UUID</span></div>
+        <div class="db-field">notification_type <span class="ftype">ENUM</span></div>
+        <div class="db-field">channel <span class="ftype">ENUM</span></div>
+        <div class="db-field">status <span class="ftype">ENUM</span></div>
+        <div class="db-field">scheduled_for <span class="ftype">TIMESTAMPTZ</span></div>
+      </div>
+      <div class="db-table">
+        <div class="db-table-header">🚫 blocked_dates</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="fk">FK</span> doctor_id <span class="ftype">UUID</span></div>
+        <div class="db-field">block_date <span class="ftype">DATE</span></div>
+        <div class="db-field">start_time / end_time <span class="ftype">TIME</span></div>
+        <div class="db-field">reason <span class="ftype">VARCHAR</span></div>
+      </div>
+      <div class="db-table">
+        <div class="db-table-header">📜 audit_logs</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field">action <span class="ftype">ENUM</span></div>
+        <div class="db-field"><span class="fk">FK</span> performed_by <span class="ftype">UUID</span></div>
+        <div class="db-field">old_values <span class="ftype">JSONB</span></div>
+        <div class="db-field">new_values <span class="ftype">JSONB</span></div>
+      </div>
+    </div>
+
+    <div style="margin:20px 0 16px;font-size:13px;font-weight:600;color:var(--orange)">── New Missed Call Tables (v2) ──────────────────────────────</div>
+    <div class="schema-row">
+      <div class="db-table new-table">
+        <div class="db-table-header orange">📞 missed_call_events</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="new-badge">NEW</span> caller_phone <span class="ftype">VARCHAR</span></div>
+        <div class="db-field">received_at <span class="ftype">TIMESTAMPTZ</span></div>
+        <div class="db-field">call_duration_secs <span class="ftype">SMALLINT</span></div>
+        <div class="db-field">status <span class="ftype">ENUM(12 values)</span></div>
+        <div class="db-field">block_reason <span class="ftype">TEXT</span></div>
+        <div class="db-field"><span class="fk">FK</span> session_id <span class="ftype">UUID</span></div>
+        <div class="db-field">raw_payload <span class="ftype">JSONB</span></div>
+      </div>
+      <div class="db-table new-table">
+        <div class="db-table-header orange">💬 missed_call_sessions</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="fk">FK</span> event_id <span class="ftype">UUID</span></div>
+        <div class="db-field">patient_phone <span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="uq">UQ</span> session_token <span class="ftype">VARCHAR(4)</span></div>
+        <div class="db-field">status <span class="ftype">ENUM</span></div>
+        <div class="db-field">slot_option_1/2/3 <span class="ftype">DATE+TIME</span></div>
+        <div class="db-field">chosen_option <span class="ftype">SMALLINT</span></div>
+        <div class="db-field"><span class="fk">FK</span> appointment_id <span class="ftype">UUID</span></div>
+        <div class="db-field">expires_at <span class="ftype">TIMESTAMPTZ</span></div>
+      </div>
+      <div class="db-table new-table">
+        <div class="db-table-header orange">⏱ missed_call_rate_limits</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="uq">UQ</span> phone <span class="ftype">VARCHAR</span></div>
+        <div class="db-field">window_24h <span class="ftype">SMALLINT</span></div>
+        <div class="db-field">window_7d <span class="ftype">SMALLINT</span></div>
+        <div class="db-field">violation_count <span class="ftype">SMALLINT</span></div>
+        <div class="db-field">last_call_at <span class="ftype">TIMESTAMPTZ</span></div>
+      </div>
+      <div class="db-table new-table">
+        <div class="db-table-header orange">⛔ phone_blacklist</div>
+        <div class="db-field"><span class="pk">PK</span> id <span class="ftype">UUID</span></div>
+        <div class="db-field"><span class="uq">UQ</span> phone <span class="ftype">VARCHAR</span></div>
+        <div class="db-field">reason <span class="ftype">ENUM</span></div>
+        <div class="db-field">is_permanent <span class="ftype">BOOL</span></div>
+        <div class="db-field">expires_at <span class="ftype">TIMESTAMPTZ</span></div>
+        <div class="db-field"><span class="fk">FK</span> added_by <span class="ftype">UUID</span></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--border)">
+      <div class="legend-item"><div class="legend-dot" style="background:#FEF9C3;border:1px solid #D97706"></div><span style="font-size:12px"><b>PK</b> Primary Key</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--teal-lt);border:1px solid var(--teal)"></div><span style="font-size:12px"><b>FK</b> Foreign Key</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F3E8FF;border:1px solid #7C3AED"></div><span style="font-size:12px"><b>UQ</b> Unique Constraint</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--orange-lt);border:1px solid var(--orange)"></div><span style="font-size:12px"><b>NEW</b> Added in v2 (missed call)</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div><span style="font-size:12px"><b>★</b> Core table</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ API REFERENCE ═══════════════════════════════════════ -->
+<div class="screen" id="screen-api">
+  <div class="page-header">
+    <h2>API Reference — v2</h2>
+    <p>25 endpoints total. 19 original + 6 new missed call endpoints. Click any to expand.</p>
+  </div>
+  <div class="legend" style="margin-bottom:18px">
+    <div class="legend-item"><span class="auth-chip auth-public">Public</span></div>
+    <div class="legend-item"><span class="auth-chip auth-patient">Patient JWT</span></div>
+    <div class="legend-item"><span class="auth-chip auth-staff">Staff JWT</span></div>
+    <div class="legend-item"><span class="auth-chip auth-admin">Admin JWT</span></div>
+    <div class="legend-item"><span class="auth-chip auth-system">System/Webhook</span></div>
+    <div class="legend-item"><span style="background:var(--orange-lt);color:var(--orange);border:1px solid var(--orange-md);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600">NEW</span> Missed call endpoints</div>
+  </div>
+
+  <!-- Original endpoints (summary) -->
+  <div class="api-group">
+    <div class="api-group-title">🌐 Public — Clinic & Online Booking (unchanged)</div>
+    <div class="endpoint-card"><div class="ep-header" onclick="toggleEp(this)"><span class="method-badge GET">GET</span><span class="ep-path">/api/clinic/info</span><span class="auth-chip auth-public">Public</span><span class="ep-desc">Doctor profile & hours</span></div><div class="ep-body"><p style="font-size:12.5px;color:var(--muted)">Unchanged from v1. See original API document for full spec.</p></div></div>
+    <div class="endpoint-card"><div class="ep-header" onclick="toggleEp(this)"><span class="method-badge GET">GET</span><span class="ep-path">/api/slots/availability?month=<span class="param">YYYY-MM</span></span><span class="auth-chip auth-public">Public</span><span class="ep-desc">Available dates</span></div><div class="ep-body"><p style="font-size:12.5px;color:var(--muted)">Unchanged from v1.</p></div></div>
+    <div class="endpoint-card"><div class="ep-header" onclick="toggleEp(this)"><span class="method-badge GET">GET</span><span class="ep-path">/api/slots?date=<span class="param">YYYY-MM-DD</span></span><span class="auth-chip auth-public">Public</span><span class="ep-desc">Time slots for a date</span></div><div class="ep-body"><p style="font-size:12.5px;color:var(--muted)">Unchanged from v1. Used by both online booking AND missed call session creation internally.</p></div></div>
+    <div class="endpoint-card"><div class="ep-header" onclick="toggleEp(this)"><span class="method-badge POST">POST</span><span class="ep-path">/api/appointments</span><span class="auth-chip auth-public">Public</span><span class="ep-desc">Create appointment (online)</span></div><div class="ep-body"><p style="font-size:12.5px;color:var(--muted)">Unchanged. booking_channel defaults to "online".</p></div></div>
+  </div>
+
+  <!-- NEW: Missed Call Endpoints -->
+  <div class="api-group">
+    <div class="api-group-title">📞 Missed Call System <span class="api-group-title new-tag-sm">6 NEW ENDPOINTS</span></div>
+
+    <div class="endpoint-card new-ep">
+      <div class="ep-header" onclick="toggleEp(this)">
+        <span class="method-badge POST">POST</span>
+        <span class="ep-path">/api/missed-call/webhook</span>
+        <span class="auth-chip auth-system">System/Webhook</span>
+        <span class="ep-desc">MSG91 missed call event</span>
+      </div>
+      <div class="ep-body">
+        <h5>Description</h5>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Receives webhook from MSG91 when a missed call is detected. This is the entry point for the entire missed call flow. Secured via HMAC signature verification (not a JWT — MSG91 signs requests with a secret).</p>
+        <h5>Request Body (from MSG91)</h5>
+        <div class="code-block">{ <span class="k">"mobile"</span>: <span class="s">"+919876543210"</span>, <span class="k">"callDuration"</span>: <span class="n">2</span>, <span class="k">"callId"</span>: <span class="s">"msg91-abc-123"</span>, <span class="k">"receivedAt"</span>: <span class="s">"2026-03-16T04:11:00Z"</span> }</div>
+        <h5>Processing Pipeline</h5>
+        <ul class="rule-list">
+          <li>Verify MSG91 HMAC signature — reject with 401 if invalid</li>
+          <li>Log event to missed_call_events immediately (even if blocked)</li>
+          <li>Run check_spam_filters() PostgreSQL function (blacklist → rate limit → validation → velocity → duplicate)</li>
+          <li>If blocked: update event status, return 200 OK silently (no error feedback to provider)</li>
+          <li>If first-time caller: schedule SMS send after 60-second delay</li>
+          <li>Fetch next 3 available slots using internal slot engine</li>
+          <li>Generate 4-char session token via generate_session_token()</li>
+          <li>Create missed_call_sessions record with slot options and token</li>
+          <li>Send options SMS via MSG91 API</li>
+          <li>Always return 200 OK — never 4xx/5xx (prevents MSG91 retry storms)</li>
+        </ul>
+        <h5>Response (always 200)</h5>
+        <div class="code-block">{ <span class="k">"received"</span>: <span class="n">true</span> }</div>
+      </div>
+    </div>
+
+    <div class="endpoint-card new-ep">
+      <div class="ep-header" onclick="toggleEp(this)">
+        <span class="method-badge POST">POST</span>
+        <span class="ep-path">/api/missed-call/reply</span>
+        <span class="auth-chip auth-system">System/Webhook</span>
+        <span class="ep-desc">Inbound SMS reply from patient</span>
+      </div>
+      <div class="ep-body">
+        <h5>Description</h5>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Receives webhook when patient replies to the options SMS. MSG91 fires this when an inbound SMS arrives on the clinic's virtual number.</p>
+        <h5>Request Body (from MSG91)</h5>
+        <div class="code-block">{ <span class="k">"mobile"</span>: <span class="s">"+919876543210"</span>, <span class="k">"message"</span>: <span class="s">"1A3B"</span>, <span class="k">"receivedAt"</span>: <span class="s">"2026-03-16T04:13:00Z"</span> }</div>
+        <h5>Processing Logic</h5>
+        <ul class="rule-list">
+          <li>Parse reply — extract option digit (1/2/3) and token (e.g. "A3B")</li>
+          <li>Look up active pending session by (patient_phone + token) — return error SMS if not found</li>
+          <li>Check session.expires_at > NOW() — send expiry SMS if session expired</li>
+          <li>Check if CANCEL — cancel matching upcoming appointment, send confirmation</li>
+          <li>Validate chosen_option is 1, 2, or 3</li>
+          <li>Create appointment via same engine as POST /api/appointments (booking_channel = "missed_call")</li>
+          <li>If slot taken since session was created: send alternative-slots SMS</li>
+          <li>On success: update session status to 'completed', send booking confirmation SMS</li>
+          <li>Queue 48h and 2h reminder notifications</li>
+        </ul>
+        <h5>Confirmation SMS Sent to Patient</h5>
+        <div class="code-block"><span class="s">"✅ Confirmed! Dr. Sharma on Mon 16 Mar at 10:20 AM. Ref: APT-2026-01424. Address: Civil Lines, Meerut. Reply CANCEL to cancel."</span></div>
+      </div>
+    </div>
+
+    <div class="endpoint-card new-ep">
+      <div class="ep-header" onclick="toggleEp(this)">
+        <span class="method-badge GET">GET</span>
+        <span class="ep-path">/api/admin/missed-call/analytics</span>
+        <span class="auth-chip auth-admin">Admin JWT</span>
+        <span class="ep-desc">Daily/weekly analytics</span>
+      </div>
+      <div class="ep-body">
+        <h5>Query Params</h5>
+        <ul class="rule-list"><li>from, to (YYYY-MM-DD) — date range. Defaults to last 7 days.</li></ul>
+        <h5>Response 200</h5>
+        <div class="code-block">{ <span class="k">"summary"</span>: { <span class="k">"totalReceived"</span>: <span class="n">142</span>, <span class="k">"booked"</span>: <span class="n">67</span>, <span class="k">"blocked"</span>: <span class="n">31</span>, <span class="k">"expired"</span>: <span class="n">24</span>, <span class="k">"conversionRatePct"</span>: <span class="n">47.2</span> }, <span class="k">"blockReasons"</span>: { <span class="k">"rateLimited"</span>: <span class="n">18</span>, <span class="k">"blacklisted"</span>: <span class="n">8</span>, <span class="k">"velocityBlocked"</span>: <span class="n">3</span>, <span class="k">"duplicate"</span>: <span class="n">2</span> }, <span class="k">"dailyBreakdown"</span>: [ { <span class="k">"date"</span>: <span class="s">"2026-03-16"</span>, <span class="k">"received"</span>: <span class="n">24</span>, <span class="k">"booked"</span>: <span class="n">11</span> } ] }</div>
+      </div>
+    </div>
+
+    <div class="endpoint-card new-ep">
+      <div class="ep-header" onclick="toggleEp(this)">
+        <span class="method-badge PUT">PUT</span>
+        <span class="ep-path">/api/admin/missed-call/config</span>
+        <span class="auth-chip auth-admin">Admin JWT</span>
+        <span class="ep-desc">Update spam thresholds</span>
+      </div>
+      <div class="ep-body">
+        <h5>Request Body</h5>
+        <div class="code-block">{ <span class="k">"maxCallsPer24h"</span>: <span class="n">2</span>, <span class="k">"maxCallsPer7d"</span>: <span class="n">5</span>, <span class="k">"sessionExpiryMins"</span>: <span class="n">15</span>, <span class="k">"burstThreshold"</span>: <span class="n">15</span>, <span class="k">"systemPauseMins"</span>: <span class="n">30</span>, <span class="k">"newNumberDelaySecs"</span>: <span class="n">60</span>, <span class="k">"systemEnabled"</span>: <span class="n">true</span> }</div>
+        <ul class="rule-list"><li>Updates missed_call_config table. Changes take effect on the next webhook received — no restart needed.</li></ul>
+      </div>
+    </div>
+
+    <div class="endpoint-card new-ep">
+      <div class="ep-header" onclick="toggleEp(this)">
+        <span class="method-badge POST">POST</span>
+        <span class="ep-path">/api/admin/missed-call/blacklist</span>
+        <span class="auth-chip auth-admin">Admin JWT</span>
+        <span class="ep-desc">Add number to blacklist</span>
+      </div>
+      <div class="ep-body">
+        <h5>Request Body</h5>
+        <div class="code-block">{ <span class="k">"phone"</span>: <span class="s">"+919876543210"</span>, <span class="k">"reason"</span>: <span class="s">"manual_staff"</span>, <span class="k">"notes"</span>: <span class="s">"Repeated prank calls"</span>, <span class="k">"isPermanent"</span>: <span class="n">false</span>, <span class="k">"expiresAt"</span>: <span class="s">"2026-04-16"</span> <span class="c">// null if permanent</span> }</div>
+        <ul class="rule-list">
+          <li>Upsert: if phone already blacklisted, updates existing record</li>
+          <li>Audit log entry created for every blacklist addition</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="endpoint-card new-ep">
+      <div class="ep-header" onclick="toggleEp(this)">
+        <span class="method-badge DELETE">DELETE</span>
+        <span class="ep-path">/api/admin/missed-call/blacklist/<span class="param">:phone</span></span>
+        <span class="auth-chip auth-admin">Admin JWT</span>
+        <span class="ep-desc">Remove from blacklist</span>
+      </div>
+      <div class="ep-body">
+        <h5>Path Param</h5>
+        <ul class="rule-list"><li>phone: URL-encoded E.164 phone number</li></ul>
+        <h5>Response 200</h5>
+        <div class="code-block">{ <span class="k">"message"</span>: <span class="s">"Number removed from blacklist. Will receive missed call flow normally."</span> }</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Staff endpoints summary -->
+  <div class="api-group">
+    <div class="api-group-title">👩‍💼 Staff & Admin (unchanged from v1)</div>
+    <div class="endpoint-card"><div class="ep-header" onclick="toggleEp(this)"><span class="method-badge POST">POST</span><span class="ep-path">/api/auth/staff/login</span><span class="auth-chip auth-public">Public</span><span class="ep-desc">Staff login</span></div><div class="ep-body"><p style="font-size:12.5px;color:var(--muted)">Unchanged. See original API document.</p></div></div>
+    <div class="endpoint-card"><div class="ep-header" onclick="toggleEp(this)"><span class="method-badge GET">GET</span><span class="ep-path">/api/staff/appointments?date=<span class="param">YYYY-MM-DD</span></span><span class="auth-chip auth-staff">Staff JWT</span><span class="ep-desc">Today's appointments</span></div><div class="ep-body"><p style="font-size:12.5px;color:var(--muted)">Response now includes bookingChannel field: "online" | "missed_call" | "walkin".</p></div></div>
+    <div class="endpoint-card"><div class="ep-header" onclick="toggleEp(this)"><span class="method-badge PATCH">PATCH</span><span class="ep-path">/api/staff/appointments/<span class="param">:id</span>/status</span><span class="auth-chip auth-staff">Staff JWT</span><span class="ep-desc">Update status</span></div><div class="ep-body"><p style="font-size:12.5px;color:var(--muted)">Unchanged. Works identically on missed-call appointments.</p></div></div>
+    <div class="endpoint-card"><div class="ep-header" onclick="toggleEp(this)"><span class="method-badge PUT">PUT</span><span class="ep-path">/api/admin/schedule</span><span class="auth-chip auth-admin">Admin JWT</span><span class="ep-desc">Update schedule</span></div><div class="ep-body"><p style="font-size:12.5px;color:var(--muted)">Unchanged. Slot changes automatically affect missed call slot options too.</p></div></div>
+    <div class="endpoint-card"><div class="ep-header" onclick="toggleEp(this)"><span class="method-badge GET">GET</span><span class="ep-path">/api/admin/reports</span><span class="auth-chip auth-admin">Admin JWT</span><span class="ep-desc">Appointment analytics</span></div><div class="ep-body"><p style="font-size:12.5px;color:var(--muted)">Now includes bookingSource breakdown: { online: N, missedCall: N, walkin: N }.</p></div></div>
+  </div>
+
+</div>
+
+</main>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const el = document.getElementById('screen-' + id);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const oc = item.getAttribute('onclick') || '';
+    if (oc.includes("'" + id + "'")) item.classList.add('active');
+  });
+  window.scrollTo(0, 0);
+}
+function toggleEp(header) {
+  header.nextElementSibling.classList.toggle('open');
+}
+</script>
+</body>
+</html>
