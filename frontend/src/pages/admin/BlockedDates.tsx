@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import StaffShell from '../../components/layout/StaffShell';
 import { getBlockedDates, addBlockedDate, removeBlockedDate, getDoctors } from '../../services/api';
 
 export default function BlockedDates() {
@@ -48,7 +47,7 @@ export default function BlockedDates() {
   };
 
   return (
-    <StaffShell>
+    <>
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <h2 className="font-serif text-2xl">Blocked Dates</h2>
         {userRole !== 'doctor' && doctors.length > 1 && (
@@ -105,6 +104,6 @@ export default function BlockedDates() {
           </div>
         </div>
       )}
-    </StaffShell>
+    </>
   );
 }

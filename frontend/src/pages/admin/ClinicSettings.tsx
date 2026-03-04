@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import StaffShell from '../../components/layout/StaffShell';
 import { getClinicSettings, updateClinicSettings } from '../../services/api';
 
 export default function ClinicSettings() {
@@ -29,7 +28,7 @@ export default function ClinicSettings() {
   };
 
   return (
-    <StaffShell>
+    <>
       <h2 className="font-serif text-2xl mb-6">Clinic Settings</h2>
 
       <div className="max-w-md card">
@@ -62,6 +61,6 @@ export default function ClinicSettings() {
           </form>
         )}
       </div>
-    </StaffShell>
+    </>
   );
 }

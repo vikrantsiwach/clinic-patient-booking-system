@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import StaffShell from '../../components/layout/StaffShell';
 import { getDoctors, getTodayQueue, createWalkIn, createEmergency, checkPatientDuplicate } from '../../services/api';
 
 export default function WalkInBookingForm() {
@@ -95,7 +94,6 @@ export default function WalkInBookingForm() {
   };
 
   if (success) return (
-    <StaffShell>
       <div className="max-w-md mx-auto card text-center py-8">
         <div className="text-5xl mb-4">{success.isEmergency ? '⚡' : '✅'}</div>
         <h3 className="font-serif text-xl mb-2">
@@ -116,14 +114,12 @@ export default function WalkInBookingForm() {
           <button onClick={() => navigate('/staff/dashboard')} className="btn-ghost w-full">Back to Queue</button>
         </div>
       </div>
-    </StaffShell>
   );
 
   const availableSessions = sessions.filter((s: any) => isEmergency || s.isOpen || !s.isFull);
   const showDoctorPicker = userRole !== 'doctor' && doctors.length > 1;
 
   return (
-    <StaffShell>
       <div className="max-w-lg mx-auto">
         <div className="flex items-center gap-3 mb-6">
           {isEmergency && <span className="text-2xl">⚡</span>}
@@ -238,6 +234,5 @@ export default function WalkInBookingForm() {
           </button>
         </form>
       </div>
-    </StaffShell>
   );
 }

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import StaffShell from '../../components/layout/StaffShell';
 import { getMyProfile, updateMyProfile, changePassword } from '../../services/api';
 
 export default function MyProfile() {
@@ -92,16 +91,13 @@ export default function MyProfile() {
   };
 
   if (loading) return (
-    <StaffShell>
       <div className="max-w-xl mx-auto space-y-3">
         <div className="card h-40 animate-pulse" />
         <div className="card h-40 animate-pulse" />
       </div>
-    </StaffShell>
   );
 
   return (
-    <StaffShell>
       <div className="max-w-xl mx-auto space-y-6">
         <h2 className="font-serif text-2xl">My Profile</h2>
 
@@ -184,6 +180,5 @@ export default function MyProfile() {
           </button>
         </form>
       </div>
-    </StaffShell>
   );
 }

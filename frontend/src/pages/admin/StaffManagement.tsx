@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import StaffShell from '../../components/layout/StaffShell';
 import { createStaff, listStaff, updateStaffStatus, updateStaffDetails } from '../../services/api';
 
 type StaffMember = {
@@ -138,7 +137,7 @@ export default function StaffManagement() {
   };
 
   return (
-    <StaffShell>
+    <>
       <h2 className="font-serif text-2xl mb-6">Staff Management</h2>
 
       {/* Tabs */}
@@ -328,6 +327,6 @@ export default function StaffManagement() {
           </form>
         </div>
       )}
-    </StaffShell>
+    </>
   );
 }

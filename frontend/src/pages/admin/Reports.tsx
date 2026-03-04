@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import StaffShell from '../../components/layout/StaffShell';
 import { getReports, getDoctors } from '../../services/api';
 
 function Stat({ label, value, sub }: { label: string; value: string | number | null | undefined; sub?: string | number | null }) {
@@ -43,7 +42,7 @@ export default function Reports() {
   const s = data?.summary;
 
   return (
-    <StaffShell>
+    <>
       <div className="flex items-center justify-between mb-6">
         <h2 className="font-serif text-2xl">Reports</h2>
         <div className="flex gap-3 items-center flex-wrap">
@@ -105,6 +104,6 @@ export default function Reports() {
           )}
         </>
       ) : null}
-    </StaffShell>
+    </>
   );
 }

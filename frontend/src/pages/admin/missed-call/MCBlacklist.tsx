@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import StaffShell from '../../../components/layout/StaffShell';
 import { addToBlacklist, removeFromBlacklist } from '../../../services/api';
 
 export default function MCBlacklist() {
@@ -30,7 +29,7 @@ export default function MCBlacklist() {
   };
 
   return (
-    <StaffShell>
+    <>
       <div className="flex items-center gap-4 mb-6">
         <button onClick={() => navigate('/admin/missed-call')} className="text-muted hover:text-ink">← Back</button>
         <h2 className="font-serif text-2xl">Blacklist Manager</h2>
@@ -88,6 +87,6 @@ export default function MCBlacklist() {
           </div>
         </div>
       )}
-    </StaffShell>
+    </>
   );
 }

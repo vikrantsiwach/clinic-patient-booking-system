@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import StaffShell from '../../components/layout/StaffShell';
 import { searchPatients } from '../../services/api';
 
 export default function PatientSearch() {
@@ -21,7 +20,7 @@ export default function PatientSearch() {
   };
 
   return (
-    <StaffShell>
+    <>
       <h2 className="font-serif text-2xl mb-6">Patient Search</h2>
       <form onSubmit={search} className="flex gap-3 mb-6">
         <input
@@ -58,6 +57,6 @@ export default function PatientSearch() {
           ))}
         </div>
       )}
-    </StaffShell>
+    </>
   );
 }

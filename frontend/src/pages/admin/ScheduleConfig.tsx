@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import StaffShell from '../../components/layout/StaffShell';
 import { getSchedule, updateSchedule, getDoctors } from '../../services/api';
 
 const DAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
@@ -107,7 +106,7 @@ export default function ScheduleConfig() {
   };
 
   return (
-    <StaffShell>
+    <>
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <h2 className="font-serif text-2xl">Schedule Configuration</h2>
         <div className="flex items-center gap-3 flex-wrap">
@@ -215,6 +214,6 @@ export default function ScheduleConfig() {
           ))}
         </div>
       )}
-    </StaffShell>
+    </>
   );
 }

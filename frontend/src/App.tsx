@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import ProtectedRoute from './components/layout/ProtectedRoute';
+import StaffShell from './components/layout/StaffShell';
 
 // LandingPage loads eagerly — it's the entry point
 import LandingPage from './pages/patient/LandingPage';
@@ -35,6 +36,28 @@ function PageLoader() {
   );
 }
 
+function ContentLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-64">
+      <div className="w-6 h-6 rounded-full border-2 border-teal border-t-transparent animate-spin" />
+    </div>
+  );
+}
+
+// Persistent layout — StaffShell stays mounted across all child route navigations.
+// Only the <Outlet /> (page content) swaps, so the sidebar never flashes.
+function StaffLayout({ role = 'staff' }: { role?: 'staff' | 'admin' }) {
+  return (
+    <ProtectedRoute role={role}>
+      <StaffShell>
+        <Suspense fallback={<ContentLoader />}>
+          <Outlet />
+        </Suspense>
+      </StaffShell>
+    </ProtectedRoute>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -47,49 +70,28 @@ export default function App() {
           <Route path="/book/review" element={<ReviewPage />} />
           <Route path="/book/confirmed" element={<ConfirmedPage />} />
           <Route path="/missed-call" element={<MissedCallHowItWorks />} />
-
-          {/* Patient — handles its own auth via OTP login form */}
           <Route path="/my-appointments" element={<PatientDashboard />} />
 
-          {/* Staff */}
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/staff/dashboard" element={
-            <ProtectedRoute role="staff"><QueueDashboard /></ProtectedRoute>
-          } />
-          <Route path="/staff/walkin" element={
-            <ProtectedRoute role="staff"><WalkInBookingForm /></ProtectedRoute>
-          } />
-          <Route path="/staff/patients" element={
-            <ProtectedRoute role="staff"><PatientSearch /></ProtectedRoute>
-          } />
-          <Route path="/staff/profile" element={
-            <ProtectedRoute role="staff"><MyProfile /></ProtectedRoute>
-          } />
 
-          {/* Staff + Admin shared */}
-          <Route path="/admin/schedule" element={
-            <ProtectedRoute role="staff"><ScheduleConfig /></ProtectedRoute>
-          } />
-          <Route path="/admin/blocked-dates" element={
-            <ProtectedRoute role="staff"><BlockedDates /></ProtectedRoute>
-          } />
-          <Route path="/admin/reports" element={
-            <ProtectedRoute role="staff"><Reports /></ProtectedRoute>
-          } />
+          {/* Staff — StaffShell persists, only content swaps on navigation */}
+          <Route element={<StaffLayout role="staff" />}>
+            <Route path="/staff/dashboard" element={<QueueDashboard />} />
+            <Route path="/staff/walkin" element={<WalkInBookingForm />} />
+            <Route path="/staff/patients" element={<PatientSearch />} />
+            <Route path="/staff/profile" element={<MyProfile />} />
+            <Route path="/admin/schedule" element={<ScheduleConfig />} />
+            <Route path="/admin/blocked-dates" element={<BlockedDates />} />
+            <Route path="/admin/reports" element={<Reports />} />
+          </Route>
 
           {/* Admin only */}
-          <Route path="/admin/settings" element={
-            <ProtectedRoute role="admin"><ClinicSettings /></ProtectedRoute>
-          } />
-          <Route path="/admin/staff" element={
-            <ProtectedRoute role="admin"><StaffManagement /></ProtectedRoute>
-          } />
-          <Route path="/admin/missed-call" element={
-            <ProtectedRoute role="admin"><MCAdminDashboard /></ProtectedRoute>
-          } />
-          <Route path="/admin/missed-call/blacklist" element={
-            <ProtectedRoute role="admin"><MCBlacklist /></ProtectedRoute>
-          } />
+          <Route element={<StaffLayout role="admin" />}>
+            <Route path="/admin/settings" element={<ClinicSettings />} />
+            <Route path="/admin/staff" element={<StaffManagement />} />
+            <Route path="/admin/missed-call" element={<MCAdminDashboard />} />
+            <Route path="/admin/missed-call/blacklist" element={<MCBlacklist />} />
+          </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

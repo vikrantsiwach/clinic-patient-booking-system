@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import StaffShell from '../../../components/layout/StaffShell';
 import { getMCAnalytics, updateMCConfig } from '../../../services/api';
 
 function Stat({ label, value, color }: { label: string; value: string | number | null | undefined; color: string }) {
@@ -36,7 +35,7 @@ export default function MCAdminDashboard() {
   const s = data?.summary;
 
   return (
-    <StaffShell>
+    <>
       <div className="flex items-center justify-between mb-6">
         <h2 className="font-serif text-2xl">Missed Call Analytics</h2>
         <button onClick={() => navigate('/admin/missed-call/blacklist')} className="btn-secondary text-sm py-2 px-4">
@@ -126,6 +125,6 @@ export default function MCAdminDashboard() {
           </div>
         </div>
       )}
-    </StaffShell>
+    </>
   );
 }

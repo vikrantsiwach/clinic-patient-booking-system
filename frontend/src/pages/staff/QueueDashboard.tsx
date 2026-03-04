@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import StaffShell from '../../components/layout/StaffShell';
 import { ChannelPill } from '../../components/ui/StatusPill';
 import { getAppointments, updateAppointmentStatus, addDoctorNotes, getDoctors } from '../../services/api';
 
@@ -141,7 +140,7 @@ export default function QueueDashboard() {
   const canAddNotes      = userRole === 'doctor' || userRole === 'admin';
 
   return (
-    <StaffShell>
+    <>
       {/* Header */}
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <h2 className="font-serif text-2xl">Queue</h2>
@@ -302,6 +301,6 @@ export default function QueueDashboard() {
           </div>
         </div>
       )}
-    </StaffShell>
+    </>
   );
 }
