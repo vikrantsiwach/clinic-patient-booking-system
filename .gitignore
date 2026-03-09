@@ -5,6 +5,7 @@ node_modules/
 .env
 .env.local
 .env.production
+.env.neon
 
 # Logs
 *.log
@@ -32,3 +33,6 @@ Thumbs.db
 # Test coverage
 coverage/
 .vercel
+
+# Claude Code local settings (may contain credentials)
+.claude/settings.local.json
